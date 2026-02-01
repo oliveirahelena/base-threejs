@@ -1,5 +1,13 @@
 import * as THREE from "three"
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import GUI from "lil-gui"
+
+/**
+ * Base
+ */
+
+// Debug
+const gui = new GUI()
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl")
@@ -7,13 +15,23 @@ const canvas = document.querySelector("canvas.webgl")
 // Scene
 const scene = new THREE.Scene()
 
-// Object
-const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
-const mesh = new THREE.Mesh(geometry, material)
-scene.add(mesh)
+/**
+ * Textures
+ */
+const textureLoader = new THREE.TextureLoader()
 
-// Sizes
+/**
+ * Test cube
+ */
+const cube = new THREE.Mesh(
+  new THREE.BoxGeometry(1, 1, 1),
+  new THREE.MeshBasicMaterial()
+)
+scene.add(cube)
+
+/**
+ * Sizes
+ */
 const sizes = {
   width: window.innerWidth,
   height: window.innerHeight
@@ -54,35 +72,37 @@ window.addEventListener('dblclick', () => {
   }
 })
 
-// Camera
-// fov: campo de visualização: ângulo vertical em graus: ideal entre 45 e 75
-// aspect ratio: largura do renderer dividido pela altura do renderer
-// near: distância mínima que a câmera consegue enxergar o objeto
-// far: distância máxima que a câmera consegue enxergar o objeto
+/**
+ * Camera
+ */
+// Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.z = 3
-camera.lookAt(mesh.position)
 scene.add(camera)
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
 
-// Renderer
+/**
+ * Renderer
+ */
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-// Animate
-const clock = new THREE.Clock()
+/**
+ * Animate
+ */
+const timer = new THREE.Timer();
+timer.connect(document); // use Page Visibility API
 
 const tick = () => {
-  const elapsedTime = clock.getElapsedTime()
-
-  // Update objects
-  mesh.rotation.y = elapsedTime;
+  // Timer
+  timer.update()
+  const elapsedTime = timer.getElapsed()
 
   // Update controls
   controls.update()
